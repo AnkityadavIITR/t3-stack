@@ -11,8 +11,6 @@ export const ourFileRouter = {
   imageUploader: f({ image: { maxFileSize: "4MB", maxFileCount: 40 } })
     .middleware(async ({ req }) => {
       const user = auth();
-      console.log(user);
-      
       if (!user.userId) throw new UploadThingError("Unauthorized");
 
       const fullUserData = await clerkClient.users.getUser(user.userId);
@@ -23,6 +21,7 @@ export const ourFileRouter = {
       return { userId: user.userId };
     })
     .onUploadComplete(async ({ metadata, file }) => {
+
       await db.insert(posts).values({
         name: file.name,
         url: file.url,

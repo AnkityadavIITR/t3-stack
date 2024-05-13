@@ -1,30 +1,44 @@
-import Link from "next/link";
-import {db} from "./../server/db/index"
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 import Image from "next/image";
+import Link from "next/link";
+import { getPosts } from "~/server/queries";
 
-import { CreatePost } from "~/app/_components/create-post";
-import { api } from "~/trpc/server";
+export const dynamic = "force-dynamic";
 
-export const dynamic="force-dynamic"
-
-export default async function Home() {
-  const posts = await db.query.posts.findMany({
-    orderBy:(model,{desc})=>desc(model.id)
-  });
-  console.log(posts)
+async function Images() {
+  const images = await getPosts();
 
   return (
-    <main className="flex min-h-screen flex-wrap gap-4 bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-      {
-        posts?.map((post)=>{
-          return <div key={post.id}>
-            <img src={post.url} alt="post" className="w-[200px] h-[200px]"></img>
-            <p>{post.name}</p>
-          </div>
-        })
-      }
-    </main>
+    <div className="flex flex-wrap justify-center gap-4 p-4">
+      {images.map((image) => (
+        <div key={image.id} className="flex h-48 w-48 flex-col">
+          <Link href={`/img/${image.id}`}>
+            <Image
+              src={image.url}
+              style={{ objectFit: "contain" }}
+              width={192}
+              height={192}
+              alt={image.name}
+            />
+          </Link>
+          <div>{image.name}</div>
+        </div>
+      ))}
+    </div>
   );
 }
 
-
+export default async function HomePage() {
+  return (
+    <main className="">
+      <SignedOut>
+        <div className="h-full w-full text-center text-2xl">
+          Please sign in above
+        </div>
+      </SignedOut>
+      <SignedIn>
+        <Images />
+      </SignedIn>
+    </main>
+  );
+}

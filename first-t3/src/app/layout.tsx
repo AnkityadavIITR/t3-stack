@@ -2,6 +2,9 @@ import "~/styles/globals.css";
 import "@uploadthing/react/styles.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Navbar from "./_components/navbar";
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { extractRouterConfig } from "uploadthing/server";
+import { ourFileRouter } from "./api/upload/core";
 
 // import { GeistSans } from "geist/font/sans";
 
@@ -22,8 +25,10 @@ export default function RootLayout({
     <html lang="en" className={``}>
       <body>
         <ClerkProvider>
+          <NextSSRPlugin  routerConfig={extractRouterConfig(ourFileRouter)}/>
           <Navbar />
           <TRPCReactProvider>{children}</TRPCReactProvider>
+
         </ClerkProvider>
       </body>
     </html>
