@@ -1,6 +1,8 @@
 import "~/styles/globals.css";
+import { ClerkProvider } from "@clerk/nextjs";
+import Navbar from "./_components/navbar";
 
-import { GeistSans } from "geist/font/sans";
+// import { GeistSans } from "geist/font/sans";
 
 import { TRPCReactProvider } from "~/trpc/react";
 
@@ -16,9 +18,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${GeistSans.variable}`}>
+    <html lang="en" className={``}>
       <body>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <ClerkProvider>
+          <Navbar />
+          <TRPCReactProvider>{children}</TRPCReactProvider>
+        </ClerkProvider>
       </body>
     </html>
   );
